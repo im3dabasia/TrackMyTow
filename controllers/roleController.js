@@ -42,6 +42,7 @@ const createRole = async (req, res) => {
 
 const getAllRoles = async (req, res) => {
 	try {
+		console.log('getAllRolesgetAllRoles');
 		const cachedValue = await getFromRedisCache('all-roles');
 
 		if (cachedValue) {
