@@ -1,4 +1,4 @@
-# Vehicle Tracking App 2
+# Vehicle Tracking App
 
 Welcome to the Tracking Tow App repository! We appreciate your interest in contributing. Please follow the guidelines below to make meaningful contributions to our project.
 
