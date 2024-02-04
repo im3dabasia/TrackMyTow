@@ -47,7 +47,7 @@ const getAllRoles = async (req, res) => {
 		if (cachedValue) {
 			return res
 				.status(200)
-				.json({ data: JSON.parse(cachedValue), success: true , message:"From Redis Memory"});
+				.json({ data: JSON.parse(cachedValue), success: true , message:"From Redis 123"});
 		}
 		const roles = await Role.find();
 		setToRedisCache('all-roles', JSON.stringify(roles));
