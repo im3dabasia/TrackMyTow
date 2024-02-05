@@ -44,10 +44,11 @@ const getAllRoles = async (req, res) => {
 	try {
 		const cachedValue = await getFromRedisCache('all-roles');
 
+		console.log("Nand here")
 		if (cachedValue) {
 			return res
 				.status(200)
-				.json({ data: JSON.parse(cachedValue), success: true , message:"From Redis 123"});
+				.json({ data: JSON.parse(cachedValue), success: true , message:"Nand here123"});
 		}
 		const roles = await Role.find();
 		setToRedisCache('all-roles', JSON.stringify(roles));
