@@ -42,14 +42,13 @@ const createRole = async (req, res) => {
 
 const getAllRoles = async (req, res) => {
 	try {
-		const cachedValue = await getFromRedisCache('all-roles');
+		// const cachedValue = await getFromRedisCache('all-roles');
 
-		console.log("Nand here")
-		if (cachedValue) {
-			return res
-				.status(200)
-				.json({ data: JSON.parse(cachedValue), success: true , message:"Nand here123"});
-		}
+		// if (cachedValue) {
+		// 	return res
+		// 		.status(200)
+		// 		.json({ data: JSON.parse(cachedValue), success: true , message:"From Redis"});
+		// }
 		const roles = await Role.find();
 		setToRedisCache('all-roles', JSON.stringify(roles));
 		res.status(200).json({ data: roles, success: true , message:"From Mongo"});
