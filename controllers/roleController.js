@@ -1,6 +1,4 @@
 const Role = require('../models/role');
-const { client } = require('../app');
-const { setToRedisCache, getFromRedisCache } = require('../config/redis');
 
 const createRole = async (req, res) => {
 	try {
@@ -42,16 +40,8 @@ const createRole = async (req, res) => {
 
 const getAllRoles = async (req, res) => {
 	try {
-		// const cachedValue = await getFromRedisCache('all-roles');
-
-		// if (cachedValue) {
-		// 	return res
-		// 		.status(200)
-		// 		.json({ data: JSON.parse(cachedValue), success: true , message:"From Redis"});
-		// }
 		const roles = await Role.find();
-		setToRedisCache('all-roles', JSON.stringify(roles));
-		res.status(200).json({ data: roles, success: true , message:"From Mongo"});
+		res.status(200).json({ data: roles, success: true, message: 'From Mongo' });
 	} catch (error) {
 		console.error('Error getting roles:', error);
 		res.status(500).json({

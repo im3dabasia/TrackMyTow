@@ -14,6 +14,7 @@ const urlParser = require('./middlewares/urlParser.js');
 const vehicleRoutes = require('./routes/vehicleRoutes');
 const userRoutes = require('./routes/userRoutes');
 const roleRoutes = require('./routes/roleRoutes');
+const towRoutes = require('./routes/towRoutes.js');
 
 // Connect to MongoDB
 const app = express();
@@ -33,5 +34,7 @@ app.use(urlParser());
 // app.use('/api', vehicleRoutes);
 app.use('/api/auth', userRoutes);
 app.use('/api/role', roleRoutes);
+app.use('/api/tow', towRoutes);
+app.use('/api/vehicle', vehicleRoutes);
 
 module.exports = app;

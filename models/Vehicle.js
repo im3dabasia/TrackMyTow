@@ -22,9 +22,12 @@ const vehicleSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	owner: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: 'User',
+	registrationDate: {
+		type: Date,
+		required: true,
+	},
+	ownerName: {
+		type: String,
 		required: true,
 	},
 	ownerEmail: {
@@ -32,6 +35,10 @@ const vehicleSchema = new mongoose.Schema({
 		required: true,
 	},
 	ownerPhone: {
+		type: String,
+		required: true,
+	},
+	locationOfRegistration: {
 		type: String,
 		required: true,
 	},
