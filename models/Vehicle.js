@@ -1,19 +1,40 @@
 const mongoose = require('mongoose');
 
 const vehicleSchema = new mongoose.Schema({
-    licenseNumber: { type: String, required: true, unique: true },
-    type: { type: String, required: true }, // e.g., bike, car, truck
-    make: { type: String, required: true }, // e.g., Toyota, Honda
-    model: { type: String, required: true },
-    color: { type: String, required: true },
-    owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    seizedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'PoliceOfficer' },
-    status: { type: String, required: true }, // e.g., seized, released
-    location: { // Store real-time location of the towed vehicle
-        lat: Number,
-        lng: Number,
-        timestamp: { type: Date, default: Date.now }
-    }
+	licenseNumber: {
+		type: String,
+		required: true,
+		unique: true,
+	},
+	type: {
+		type: String,
+		required: true,
+	},
+	make: {
+		type: String,
+		required: true,
+	},
+	model: {
+		type: String,
+		required: true,
+	},
+	color: {
+		type: String,
+		required: true,
+	},
+	owner: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'User',
+		required: true,
+	},
+	ownerEmail: {
+		type: String,
+		required: true,
+	},
+	ownerPhone: {
+		type: String,
+		required: true,
+	},
 });
 
 module.exports = mongoose.model('Vehicle', vehicleSchema);
