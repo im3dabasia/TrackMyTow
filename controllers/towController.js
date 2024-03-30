@@ -5,28 +5,30 @@ const generateRandomLinkId = require('../utils/generateRandomLInk');
 // Create a new tow
 const createTow = async (req, res) => {
 	try {
-		const { policeId, vehicles, startTime } = req.body;
+		const { policeId, vehicles } = req.body;
 		const linkId = generateRandomLinkId();
 
-		if (!policeId || vehicles.length == 0 || !startTime) {
+		if (!policeId || vehicles.length == 0) {
 			return res.status(400).json({ message: 'Please fill in all details' });
 		}
 
 		// fetch all the users based on the vechicle data provided
-		let userIds = [];
+		let vehicleId = [];
 		let userEmailIds = [];
 
-		for (const vehicleId of vehicles) {
-			const vehicle = await Vehicle.findById(vehicleId);
+		for (const licenseNumber of vehicles) {
+			// Assuming vehicles is an array of licenseNumber values and you want to find vehicles by licenseNumber
+			const vehicle = await Vehicle.findOne({ licenseNumber: licenseNumber }); // Use findOne to get a single document
 			if (!vehicle) {
-				console.log(`Vehicle with ID ${vehicleId} not found`);
+				console.log(`Vehicle with license number ${licenseNumber} not found`);
+			} else {
+				vehicleId.push(vehicle._id); // Add the vehicle's _id to the vehicleIds array
+				userEmailIds.push(vehicle.ownerEmail); // Add the vehicle's ownerEmail to the userEmailIds array
 			}
-			userIds.push(vehicle.owner);
-			userEmailIds.push(vehicle.ownerEmail);
 		}
 
 		// Send email to all owners whose car is towed
-		const userIdsArray = userIds.map((user) => String(user._id));
+		const vehicleIdsArray = vehicleId.map((user) => String(user._id));
 
 		const sendEmailToConcernedUsers = await notifyUsersForTow(
 			userEmailIds,
@@ -36,10 +38,12 @@ const createTow = async (req, res) => {
 		const newTow = await Tow.create({
 			linkId,
 			policeId,
-			userIds: userIdsArray,
+			vehicleId: vehicleIdsArray,
 			vehicles,
-			startTime,
+			startTime : Date.now(),
 		});
+
+		console.log(newTow);
 
 		res.status(201).json({ data: newTow, success: true });
 	} catch (error) {
@@ -50,16 +54,50 @@ const createTow = async (req, res) => {
 const updateTowById = async (req, res) => {
 	try {
 		const { id } = req.params;
+		const { vehicles } = req.body;
 		if (!id) {
 			return res.status(400).json({ message: 'ID parameter is missing' });
 		}
+
 		const updatedTow = await Tow.findByIdAndUpdate(id, req.body, {
 			new: true,
 		});
+
 		if (!updatedTow) {
 			return res.status(404).json({ message: 'Tow not found' });
 		}
+		// fetch all the users based on the vechicle data provided
+		let vehicleId = [];
+		let userEmailIds = [];
+
+		for (const vehicleId of vehicles) {
+			const vehicle = await Vehicle.find({licenseNumber:vehicleId});
+			if (!vehicle) {
+				console.log(`Vehicle with ID ${vehicleId} not found`);
+			}
+			vehicleId.push(vehicle._id);
+			userEmailIds.push(vehicle.ownerEmail);
+		}
+
+		// Send email to all owners whose car is towed
+		const vehicleIdsArray = vehicleId.map((user) => String(user._id));
+
+		const sendEmailToConcernedUsers = await notifyUsersForTow(
+			userEmailIds,
+			linkId
+		);
+
+		const newTow = await Tow.create({
+			linkId,
+			policeId,
+			vehicleId: vehicleIdsArray,
+			vehicles,
+			startTime,
+		});
 		res.json(updatedTow);
+
+		res.status(201).json({ data: newTow, success: true });
+		
 	} catch (error) {
 		res.status(400).json({ message: error.message });
 	}

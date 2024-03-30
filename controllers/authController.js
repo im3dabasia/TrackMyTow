@@ -9,8 +9,9 @@ const signUp = async (req, res) => {
 	try {
 		const { name, email, password, role, phonenumber } = req.body;
 
+		console.log(req.body)
 		if (!name || !email || !password || !role || !phonenumber) {
-			return res.status(200).json({
+			return res.status(401).json({
 				success: false,
 				message: 'Please fill in all details',
 			});
@@ -20,7 +21,7 @@ const signUp = async (req, res) => {
 			$or: [{ email }, { phonenumber }],
 		});
 		if (existingUser) {
-			return res.status(200).json({
+			return res.status(401).json({
 				success: false,
 				message: 'User with the provided email or phone number already exists',
 			});
@@ -34,10 +35,12 @@ const signUp = async (req, res) => {
 			role,
 			phonenumber,
 		});
+		console.log(newUser)
 
-		await newUser
-			.populate({ path: 'role', select: '-deactivate' })
-			.select('-password -deactivate');
+		const userdetail = await User.findById(newUser._id)
+			.populate({ path: 'role' })
+			.select('-password -deactivate')
+		// .populate({ path: 'role', select: '-deactivate' })
 
 		const userRole = await Role.findOne({ _id: role });
 		const token = generateToken(
@@ -58,13 +61,13 @@ const signUp = async (req, res) => {
 				message: 'User Sign up successfully',
 				data: {
 					token,
-					newUser,
+					userdetail,
 				},
 			});
 	} catch (error) {
 		res.status(500).json({
 			success: false,
-			message: 'Failed to delete user',
+			message: 'Failed to Sign up user',
 			error: error.message,
 		});
 	}
@@ -73,27 +76,35 @@ const signUp = async (req, res) => {
 const login = async (req, res, next) => {
 	try {
 		const { email, phonenumber, password } = req.body;
+		console.log(req.body)
 
-		if ((!email && !phonenumber) || !password) {
+		if ((!email || !phonenumber) && !password) {
 			return res.status(200).json({
 				success: false,
 				message: 'Please fill all the required fields',
 			});
 		}
 
+		let query = {};
+		if (email) query.email = email;
+		if (phonenumber) query.phonenumber = phonenumber;
+
 		const user = await User.findOne({
-			$or: [{ email }, { phonenumber }],
+			$or: [query]
 		})
 			.populate({ path: 'role', select: '-deactivate' })
-			.select('-deactivate ');
+			.select('-deactivate');
 		if (!user) {
 			return res.status(200).json({
 				success: false,
 				message: 'User Does not exist please register',
 			});
 		}
+		console.log(user)
 
 		const isMatch = await bcrypt.compare(password, user.password);
+
+		console.log(isMatch)
 
 		if (!isMatch) {
 			return res.status(401).json({

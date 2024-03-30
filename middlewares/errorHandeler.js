@@ -1,5 +1,5 @@
 const errorHandeler = (error, req, res, next) => {
-	console.log('errorHandeler');
+	console.log('errorHandler');
 	return res.status(500).json({
 		success: false,
 		message: 'Failed to update user',
