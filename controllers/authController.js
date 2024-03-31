@@ -11,9 +11,9 @@ const signUp = async (req, res) => {
 
 		console.log(req.body)
 		if (!name || !email || !password || !role || !phonenumber) {
-			return res.status(401).json({
+			return res.status(400).json({
 				success: false,
-				message: 'Please fill in all details',
+				message: 'Please specify all the fields',
 			});
 		}
 
@@ -21,7 +21,7 @@ const signUp = async (req, res) => {
 			$or: [{ email }, { phonenumber }],
 		});
 		if (existingUser) {
-			return res.status(401).json({
+			return res.status(409).json({
 				success: false,
 				message: 'User with the provided email or phone number already exists',
 			});
@@ -55,10 +55,10 @@ const signUp = async (req, res) => {
 				httpOnly: false,
 				maxAge: 1000 * 60 * 60 * 24 * 7,
 			})
-			.status(201)
+			.status(200)
 			.json({
 				success: true,
-				message: 'User Sign up successfully',
+				message: 'Registration successful',
 				data: {
 					token,
 					userdetail,
@@ -67,7 +67,7 @@ const signUp = async (req, res) => {
 	} catch (error) {
 		res.status(500).json({
 			success: false,
-			message: 'Failed to Sign up user',
+			message: 'Failed to register user',
 			error: error.message,
 		});
 	}
@@ -79,9 +79,9 @@ const login = async (req, res, next) => {
 		console.log(req.body)
 
 		if ((!email || !phonenumber) && !password) {
-			return res.status(200).json({
+			return res.status(400).json({
 				success: false,
-				message: 'Please fill all the required fields',
+				message: 'Please specify all the fields',
 			});
 		}
 
@@ -95,9 +95,9 @@ const login = async (req, res, next) => {
 			.populate({ path: 'role', select: '-deactivate' })
 			.select('-deactivate');
 		if (!user) {
-			return res.status(200).json({
+			return res.status(401).json({
 				success: false,
-				message: 'User Does not exist please register',
+				message: 'User does not exist',
 			});
 		}
 		console.log(user)
@@ -126,10 +126,10 @@ const login = async (req, res, next) => {
 				httpOnly: false,
 				maxAge: 1000 * 60 * 60 * 24 * 7,
 			})
-			.status(201)
+			.status(200)
 			.json({
 				success: true,
-				message: 'User Login in successfully',
+				message: 'Login successful',
 				data: {
 					token,
 					user,
@@ -138,7 +138,7 @@ const login = async (req, res, next) => {
 	} catch (error) {
 		res.status(500).json({
 			success: false,
-			message: 'Failed to delete user',
+			message: 'Failed to login user',
 			error: error.message,
 		});
 	}
@@ -192,7 +192,7 @@ const updateUserById = async (req, res) => {
 		const { password } = req.body;
 
 		if (!password) {
-			return res.status(200).json({
+			return res.status(400).json({
 				success: false,
 				message: 'Please fill all the required fields',
 			});
@@ -215,7 +215,7 @@ const updateUserById = async (req, res) => {
 		}
 		res.status(200).json({
 			success: true,
-			message: 'User updated successfully',
+			message: 'Update successful',
 			data: updatedUser,
 		});
 	} catch (error) {
@@ -251,7 +251,7 @@ const deleteUserById = async (req, res) => {
 		}
 		res.status(200).json({
 			success: true,
-			message: 'User deactivated successfully',
+			message: 'Deactivation successful',
 			data: deletedUser,
 		});
 	} catch (error) {
@@ -267,7 +267,7 @@ const logout = async (req, res, next) => {
 	try {
 		return res.clearCookie('token').status(200).json({
 			success: true,
-			message: 'User logged out successfully',
+			message: 'Logout successful',
 		});
 	} catch (error) {
 		console.error('Error updating user:', error);

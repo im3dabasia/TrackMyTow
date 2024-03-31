@@ -9,7 +9,7 @@ const createTow = async (req, res) => {
 		const linkId = generateRandomLinkId();
 
 		if (!policeId || vehicles.length == 0) {
-			return res.status(400).json({ message: 'Please fill in all details' });
+			return res.status(400).json({ message: 'Please specify all the fields' });
 		}
 
 		// fetch all the users based on the vechicle data provided
@@ -45,9 +45,9 @@ const createTow = async (req, res) => {
 
 		console.log(newTow);
 
-		res.status(201).json({ data: newTow, success: true });
+		res.status(200).json({ data: newTow, success: true });
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		res.status(500).json({ message: error.message });
 	}
 };
 
@@ -64,7 +64,7 @@ const updateTowById = async (req, res) => {
 		});
 
 		if (!updatedTow) {
-			return res.status(404).json({ message: 'Tow not found' });
+			return res.status(404).json({ message: 'Tow session not found' });
 		}
 		// fetch all the users based on the vechicle data provided
 		let vehicleId = [];
@@ -99,7 +99,7 @@ const updateTowById = async (req, res) => {
 		res.status(201).json({ data: newTow, success: true });
 		
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		res.status(500).json({ message: error.message });
 	}
 };
 
@@ -111,12 +111,12 @@ const deleteTowById = async (req, res) => {
 		}
 		const deletedTow = await Tow.findByIdAndDelete(id);
 		if (!deletedTow) {
-			return res.status(404).json({ message: 'Tow not found' });
+			return res.status(404).json({ message: 'Tow session not found' });
 		}
 		res.status(200).json({
 			data: deletedTow,
 			success: true,
-			message: 'Tow deleted successfully',
+			message: 'Delete tow session successful',
 		});
 	} catch (error) {
 		res.status(400).json({ message: error.message });
@@ -131,12 +131,12 @@ const getTowById = async (req, res) => {
 		}
 		const tow = await Tow.findById(id);
 		if (!tow) {
-			return res.status(404).json({ message: 'Tow not found' });
+			return res.status(404).json({ message: 'Tow session not found' });
 		}
 		res.status(200).json({
 			data: tow,
 			success: true,
-			message: 'Tow details fetched successfully!',
+			message: 'Fetch tow details successful',
 		});
 	} catch (error) {
 		res.status(400).json({ message: error.message });
@@ -149,7 +149,7 @@ const getAllTows = async (req, res) => {
 		res.status(200).json({
 			data: tows,
 			success: true,
-			message: 'All Tows details fetched successfully!',
+			message: 'Fetch all tow details successful',
 		});
 	} catch (error) {
 		res.status(400).json({ message: error.message });

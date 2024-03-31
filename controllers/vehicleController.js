@@ -4,9 +4,9 @@ const Vehicle = require('../models/Vehicle');
 const createVehicle = async (req, res) => {
 	try {
 		const newVehicle = await Vehicle.create(req.body);
-		res.status(201).json(newVehicle);
+		res.status(200).json(newVehicle);
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		res.status(500).json({ message: error.message });
 	}
 };
 
@@ -23,7 +23,7 @@ const updateVehicleById = async (req, res) => {
 		}
 		res.json(updatedVehicle);
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		res.status(500).json({ message: error.message });
 	}
 };
 
@@ -34,9 +34,9 @@ const deleteVehicleById = async (req, res) => {
 		if (!deletedVehicle) {
 			return res.status(404).json({ message: 'Vehicle not found' });
 		}
-		res.json({ message: 'Vehicle deleted successfully' });
+		res.json({ message: 'Delete vehicle successful' });
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		res.status(500).json({ message: error.message });
 	}
 };
 
@@ -49,7 +49,7 @@ const getVehicleById = async (req, res) => {
 		}
 		res.json(vehicle);
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		res.status(500).json({ message: error.message });
 	}
 };
 
@@ -57,9 +57,9 @@ const getVehicleById = async (req, res) => {
 const getAllVehicles = async (req, res) => {
 	try {
 		const vehicles = await Vehicle.find();
-		res.json(vehicles);
+		res.status(200).json(vehicles);
 	} catch (error) {
-		res.status(400).json({ message: error.message });
+		res.status(500).json({ message: error.message });
 	}
 };
 
