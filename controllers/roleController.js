@@ -5,8 +5,8 @@ const createRole = async (req, res) => {
 		const { name } = req.body;
 
 		if (!name) {
-			return res.status(200).json({
-				message: 'Please fill in all details',
+			return res.status(400).json({
+				message: 'Please specify all the fields',
 				success: false,
 			});
 		}
@@ -14,7 +14,7 @@ const createRole = async (req, res) => {
 		const existingRole = await Role.findOne({ name });
 		if (existingRole) {
 			return res
-				.status(400)
+				.status(409)
 				.json({ error: 'Role already exists', success: false });
 		}
 
@@ -24,9 +24,9 @@ const createRole = async (req, res) => {
 
 		const savedRole = await newRole.save();
 
-		res.status(201).json({
+		res.status(200).json({
 			data: savedRole,
-			message: 'Role Added Successfully',
+			message: 'Role add successful',
 			success: true,
 		});
 	} catch (error) {
@@ -56,8 +56,8 @@ const updateRole = async (req, res) => {
 		const { id } = req.params;
 		const { name } = req.body;
 		if (!name) {
-			return res.status(200).json({
-				message: 'Please fill in all details',
+			return res.status(400).json({
+				message: 'Please specify all the fields',
 				success: true,
 			});
 		}
@@ -93,7 +93,7 @@ const deleteRole = async (req, res) => {
 		res.status(200).json({
 			data: deleteRole,
 			success: true,
-			message: 'Role Deleted Successfully',
+			message: 'Role delete successful',
 		});
 	} catch (error) {
 		console.error('Error getting Roles:', error);
