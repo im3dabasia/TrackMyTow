@@ -14,21 +14,22 @@ const towSchema = new mongoose.Schema({
 	},
 	users: [
 		{
-			type: mongoose.Schema.Types.ObjectId,
+			type: String,
 			ref: 'Vehicle',
 		},
 	],
-	vechicles: [
+	vehicles: [
 		{
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Vehicle',
 		},
 	],
-	startTime: {
-		type: Date,
-		required: true,
-		default: Date.now,
-	},
+	licenseNumber: [
+		{
+			type: String,
+			ref: 'Vehicle',
+		},
+	],
 	endTime: {
 		type: Date,
 		required: true,
@@ -44,8 +45,57 @@ const towSchema = new mongoose.Schema({
 				type: Number,
 				required: true,
 			},
+			vehicle: {
+				type: String,
+				ref: 'Vehicle',
+				required: true
+			},
+			startTime: {
+				type: Date,
+				required: true,
+				default: Date.now,
+			},
+			startLocation: {
+				lat: {
+					type: Number,
+					required: true,
+				},
+				long: {
+					type: Number,
+					required: true,
+				},
+			}
 		},
 	],
+	currentLocation: {
+		lat: {
+			type: Number,
+			required: true,
+		},
+		long: {
+			type: Number,
+			required: true,
+		},
+	},
+	updatedTime: {
+		type: Date,
+		required: true,
+		default: Date.now,
+	},
+	endLocation: {
+		lat: {
+			type: Number,
+			required: true,
+		},
+		long: {
+			type: Number,
+			required: true,
+		},
+	},
+	sessionEnd: {
+		type: Boolean,
+		required: true,
+	}
 });
 
 const Tow = mongoose.model('Tow', towSchema);
