@@ -11,9 +11,10 @@ const createTow = async (req, res) => {
     const linkId = generateRandomLinkId();
 
     if (!policeId || !startLocation || !endLocation) {
-      return res
-        .status(400)
-        .json({ message: "Please specify all the fields", success: false });
+      return res.status(400).json({
+        message: "Please specify all the fields",
+        success: false,
+      });
     }
 
     const newTow = await TowSession.create({
@@ -88,9 +89,10 @@ const addVehicleToTow = async (req, res) => {
     const { towId, numberPlate, pickupLocation } = req.body;
 
     if (!towId || !numberPlate || !pickupLocation) {
-      return res
-        .status(400)
-        .json({ message: "Please specify all the fields", success: false });
+      return res.status(400).json({
+        message: "Please specify all the fields",
+        success: false,
+      });
     }
 
     const currentTow = await TowSession.findById(towId);
@@ -142,9 +144,10 @@ const editVehicleInTow = async (req, res) => {
       req.body;
 
     if (!towId || !oldNumberPlate || !newNumberPlate || !newPickupLocation) {
-      return res
-        .status(400)
-        .json({ message: "Please specify all the fields", success: false });
+      return res.status(400).json({
+        message: "Please specify all the fields",
+        success: false,
+      });
     }
 
     const currentTow = await TowSession.findById(towId);
@@ -192,9 +195,10 @@ const deleteVehicleFromTow = async (req, res) => {
     const { towId, numberPlate } = req.body;
 
     if (!towId || !numberPlate) {
-      return res
-        .status(400)
-        .json({ message: "Please specify all the fields", success: false });
+      return res.status(400).json({
+        message: "Please specify all the fields",
+        success: false,
+      });
     }
 
     const currentTow = await TowSession.findById(towId);
@@ -528,7 +532,9 @@ const updateTowById = async (req, res) => {
 
     // Iterate through license numbers to fetch vehicle details
     for (const licenseNumber of vehicles) {
-      const vehicle = await Vehicle.findOne({ licenseNumber: licenseNumber });
+      const vehicle = await Vehicle.findOne({
+        licenseNumber: licenseNumber,
+      });
       if (!vehicle) {
         return res.status(500).json({
           message: `Vehicle with license number ${licenseNumber} not found`,
@@ -643,16 +649,18 @@ const towStatus = async (req, res) => {
     // const latestTow = await Tow.findOne({ vehicles }).sort({ 'journey.startTime': -1 }).limit(1);
     // const latestTow = await Tow.findOne({ 'journey.vehicle': { $in: vehicles } }).sort({ 'journey.startTime': -1 }).limit(1);
 
-    const latestTow = await Tow.findOne({ licenseNumber: { $in: vehicles } })
+    const latestTow = await Tow.findOne({
+      licenseNumber: { $in: vehicles },
+    })
       .sort({ "journey.startTime": -1 })
       .limit(1);
 
     console.log(latestTow);
 
     if (!latestTow) {
-      return res
-        .status(500)
-        .json({ message: "Tow data not found for the provided vehicle ID" });
+      return res.status(500).json({
+        message: "Tow data not found for the provided vehicle ID",
+      });
     }
 
     // Assuming you have a Vehicle model/schema defined and a method to query the database
@@ -767,9 +775,10 @@ const deleteVehicle = async (req, res) => {
       // Validate policeId before saving
       if (!mongoose.Types.ObjectId.isValid(tow.policeId)) {
         console.log("Invalid or missing policeId.");
-        return res
-          .status(400)
-          .json({ message: "Invalid or missing policeId.", success: false });
+        return res.status(400).json({
+          message: "Invalid or missing policeId.",
+          success: false,
+        });
       }
 
       console.log("Tow after Updation: ", tow);
