@@ -9,8 +9,7 @@ const towSchema = new mongoose.Schema({
 	policeId: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User',
-		required: false,
-		default: false,
+		required: true,
 	},
 	users: [
 		{
