@@ -252,7 +252,7 @@ const getTowHistory = async (req, res) => {
 
     const prevTows = await TowSession.find({
       policeId,
-      sessionEnd: false,
+      sessionEnd: true,
     });
 
     if (prevTows.length != 0) {
