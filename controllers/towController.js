@@ -98,6 +98,13 @@ const addVehicleToTow = async (req, res) => {
     const currentTow = await TowSession.findById(towId);
 
     if (currentTow) {
+      if (currentTow.sessionEnd) {
+        return res.status(404).json({
+          message: "Cannot add vehicle to inactive tow session",
+          success: false,
+        });
+      }
+
       const existingVehicle = currentTow.towedVehicles.find(
         (vehicle) => vehicle.numberPlate === numberPlate
       );
@@ -153,6 +160,13 @@ const editVehicleInTow = async (req, res) => {
     const currentTow = await TowSession.findById(towId);
 
     if (currentTow) {
+      if (currentTow.sessionEnd) {
+        return res.status(404).json({
+          message: "Cannot edit vehicle in inactive tow session",
+          success: false,
+        });
+      }
+
       const existingVehicleIndex = currentTow.towedVehicles.findIndex(
         (vehicle) => vehicle.numberPlate === oldNumberPlate
       );
@@ -204,6 +218,13 @@ const deleteVehicleFromTow = async (req, res) => {
     const currentTow = await TowSession.findById(towId);
 
     if (currentTow) {
+      if (currentTow.sessionEnd) {
+        return res.status(404).json({
+          message: "Cannot delete vehicle from inactive tow session",
+          success: false,
+        });
+      }
+
       const existingVehicleIndex = currentTow.towedVehicles.findIndex(
         (vehicle) => vehicle.numberPlate === numberPlate
       );
