@@ -19,7 +19,7 @@ router.put(
   checkRole(["Police", "Admin"]),
   towController.endTow
 );
-router.get(
+router.post(
   "/tows/history",
   verifyToken,
   checkRole(["Police", "Admin"]),
