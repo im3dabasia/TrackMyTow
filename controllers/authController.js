@@ -37,7 +37,7 @@ const signUp = async (req, res) => {
     });
     console.log(newUser);
 
-    const userdetail = await User.findById(newUser._id)
+    const user = await User.findById(newUser._id)
       .populate({ path: "role" })
       .select("-password -deactivate");
     // .populate({ path: 'role', select: '-deactivate' })
@@ -61,7 +61,7 @@ const signUp = async (req, res) => {
         message: "Registration successful",
         data: {
           token,
-          userdetail,
+          user,
         },
       });
   } catch (error) {
