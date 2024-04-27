@@ -1,32 +1,35 @@
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const verifyToken = async (req, res, next) => {
-	try {
-		// const token = req.cookies ? req.cookies.token : '';
-		const token = req.headers['authorization'] ?  req.headers['authorization'].split(' ')[1]:'';
-		// console.log(token)
-		if (!token) {
-			return res.status(401).json({ error: 'User not authorized' });
-		}
+  try {
+    // const token = req.cookies ? req.cookies.token : '';
+    const token = req.headers["authorization"]
+      ? req.headers["authorization"].split(" ")[1]
+      : "";
+    console.log(req.headers);
+    // console.log(token)
+    if (!token) {
+      return res.status(401).json({ error: "User not authorized" });
+    }
 
-		const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-		if (!decoded) {
-			return res.status(401).json({ error: 'User not authorized' });
-		}
+    if (!decoded) {
+      return res.status(401).json({ error: "User not authorized" });
+    }
 
-		req.user = {
-			userId: decoded.id,
-			role: decoded.role,
-			userEmail: decoded.email,
-			userPhonenumber: decoded.phonenumber,
-		};
+    req.user = {
+      userId: decoded.id,
+      role: decoded.role,
+      userEmail: decoded.email,
+      userPhonenumber: decoded.phonenumber,
+    };
 
-		next();
-	} catch (error) {
-		next(error);
-	}
+    next();
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = verifyToken;

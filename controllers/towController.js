@@ -82,6 +82,49 @@ const endTow = async (req, res) => {
   }
 };
 
+const updateTowLocation = async (req, res) => {
+  console.log(req.body);
+  try {
+    const { towId, currentLocation } = req.body;
+
+    if (!towId || !currentLocation) {
+      return res
+        .status(400)
+        .json({ message: "Please specify all fields", success: false });
+    }
+
+    const currentTow = await TowSession.findById(towId);
+
+    if (currentTow) {
+      if (currentTow.sessionEnd) {
+        return res.status(404).json({
+          message: "Tow session already ended",
+          success: false,
+        });
+      }
+
+      currentTow.currentLocation = currentLocation;
+
+      await currentTow.save();
+
+      console.log(currentTow);
+
+      return res.status(200).json({
+        data: currentTow,
+        success: true,
+        message: "Update current tow location successful",
+      });
+    } else {
+      return res.status(404).json({
+        message: "No tow session found",
+        success: false,
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message, success: false });
+  }
+};
+
 const addVehicleToTow = async (req, res) => {
   console.log(req.body);
   try {
@@ -123,7 +166,7 @@ const addVehicleToTow = async (req, res) => {
         startTime: new Date(),
       };
 
-      console.log(newVehicle)
+      console.log(newVehicle);
 
       currentTow.towedVehicles.push(newVehicle);
 
@@ -133,16 +176,24 @@ const addVehicleToTow = async (req, res) => {
 
       console.log("current Tow", currentTow);
 
-      const vehicle = await Vehicle.findOne({ licenseNumber: numberPlate }); // Use findOne to get a single document
+      const vehicle = await Vehicle.findOne({
+        licenseNumber: numberPlate,
+      }); // Use findOne to get a single document
       if (!vehicle) {
         console.log(`Vehicle with license number ${numberPlate} not found`);
       }
       userEmailId = vehicle.ownerEmail;
       usernumberPlate = vehicle.licenseNumber;
       userName = vehicle.ownerName;
-      
+
       // send email to owner of vehicle that their vehicle has been picked up by a tow truck driver
-      await notifyUsersForTow(userEmailId,linkId, userName, usernumberPlate, '35621090');
+      await notifyUsersForTow(
+        userEmailId,
+        linkId,
+        userName,
+        usernumberPlate,
+        "35621090"
+      );
       console.log(`Email sent successfully to ${userEmailId}.`);
 
       return res.status(200).json({
@@ -316,18 +367,19 @@ const towStatus = async (req, res) => {
   try {
     const { vehicles } = req.body;
 
-    const latestTow = await TowSession.findOne({ "towedVehicles.numberPlate" : vehicles })
-      .sort({ "lastLocationUpdateTime": -1 })
+    const latestTow = await TowSession.findOne({
+      "towedVehicles.numberPlate": vehicles,
+    })
+      .sort({ lastLocationUpdateTime: -1 })
       .limit(1);
 
     console.log(latestTow);
 
     if (!latestTow) {
-      return res
-        .status(500)
-        .json({ message: "Tow data not found for the provided vehicle ID" });
+      return res.status(500).json({
+        message: "Tow data not found for the provided vehicle ID",
+      });
     }
-    
 
     let currLocation;
     if (latestTow.sessionEnd === false) {
@@ -339,9 +391,9 @@ const towStatus = async (req, res) => {
     } else {
       // If session is ended, get the location from the last ended session
       const lastEndedSession = await TowSession.findOne({
-         "towedVehicles.numberPlate" : vehicles ,
+        "towedVehicles.numberPlate": vehicles,
       })
-        .sort({ "lastLocationUpdateTime": -1 })
+        .sort({ lastLocationUpdateTime: -1 })
         .limit(1);
       if (!lastEndedSession) {
         return res.status(500).json({
@@ -350,10 +402,8 @@ const towStatus = async (req, res) => {
         });
       }
       currLocation = {
-        latitude:
-          lastEndedSession.endLocation.lat,
-        longitude:
-          lastEndedSession.endLocation.long,
+        latitude: lastEndedSession.endLocation.lat,
+        longitude: lastEndedSession.endLocation.long,
       };
     }
 
@@ -365,7 +415,7 @@ const towStatus = async (req, res) => {
     // You can now post the current location or use it as needed in your application
     res.status(200).json({
       location: currLocation,
-      startLocation:  latestTow.startLocation,
+      startLocation: latestTow.startLocation,
       endLocation: latestTow.endLocation,
       success: true,
       message: "Location Sent Successfully",
@@ -375,7 +425,6 @@ const towStatus = async (req, res) => {
     res.status(500).json({ message: error.message, success: false });
   }
 };
-
 
 // const createTow2 = async (req, res) => {
 //   console.log(req.body);
@@ -745,7 +794,6 @@ const towStatus = async (req, res) => {
 //   }
 // };
 
-
 // const deleteVehicle = async (req, res) => {
 //   try {
 //     const { vehicles } = req.body; // The license number of the vehicle to be removed
@@ -830,14 +878,10 @@ const towStatus = async (req, res) => {
 module.exports = {
   createTow,
   endTow,
+  updateTowLocation,
   getTowHistory,
   addVehicleToTow,
   editVehicleInTow,
   deleteVehicleFromTow,
   towStatus,
-  // updateTowById,
-  // deleteTowById,
-  // getTowById,
-  // getAllTows,
-  // deleteVehicle,
 };
