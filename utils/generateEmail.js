@@ -1,42 +1,44 @@
-const nodemailer = require("nodemailer");
-require("dotenv").config();
+const postmark = require('postmark');
+require('dotenv').config();
 
-const sendEmailToUsers = async (users, linkId) => {
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: process.env.EMAIL || "eshaandabasiya@gmail.com",
-      pass: process.env.EMAIL_PASSWORD || "",
-    },
-  });
+const sendEmailToUsers = async (emailID, templateID, data) => {
+    try {
 
-  const mailOptions = {
-    from: process.env.EMAIL || "eshaandabasiya@gmail.com",
-    to: users.map((user) => user.email).join(","),
-    subject: "Your car is being towed",
-    text: `Dear user, your car is being towed. Please contact us for further information. Please use the link below to track your car. Here is link: ${linkId}`,
-  };
+        const client = new postmark.ServerClient(process.env.POSTMARK_TOKEN);
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.error("Error sending email:", error);
-    } else {
-      console.log("Email sent:", info.response);
-    }
-  });
+        const emailOptions = {
+            From: process.env.EMAIL,
+            To: emailID,
+            TemplateId: templateID,
+            TemplateModel: data
+        };
+        console.log("Data: ",data)
+        const response = await client.sendEmailWithTemplate(emailOptions);
+        console.log(`Email sent:`, response);
+      } catch (error) {
+        console.error('Error sending email:', error.message);
+        throw error;
+      }
 };
 
-const notifyUsersForTow = async (emailIds, linkId) => {
-  try {
-    if (emailIds.length <= 0 || !linkId) {
-      console.log("Empty email Array || linkId missing");
-      return;
-    }
-    await sendEmailToUsers(users, linkId);
-    console.log("Emails sent successfully to users.");
-  } catch (error) {
-    console.error("Error notifying users for tow:", error);
-  }
+const notifyUsersForTow = async (emailID, linkId, userName, usernumberPlate, templateID) => {
+    try {
+
+        if (emailID.length <= 0 || !linkId) {
+            console.log('Empty email Array || linkId missing');
+            return;
+        }
+        const data={
+          linkID:`${linkId}`,
+          userName: `${userName}`,
+          usernumberPlate:`${usernumberPlate}`,
+        }
+        console.log("Notify users data: ", data)
+        await sendEmailToUsers(emailID, templateID, data);
+        console.log('Emails sent successfully to users.');
+      } catch (error) {
+        console.error('Error sending email:', error);
+      }
 };
 
 module.exports = notifyUsersForTow;
