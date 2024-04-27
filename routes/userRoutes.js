@@ -21,19 +21,25 @@ router.get(
 );
 router.get(
   "/users/:id",
-  isValidMongoObjectId,
+  isValidMongoObjectId,  
+  verifyToken,
+  checkRole(["Admin"]),
   authController.getUserById,
   errorHandeler
 );
 router.put(
   "/users/:id",
   isValidMongoObjectId,
+  verifyToken,
+  checkRole(["Admin"]),
   authController.updateUserById,
   errorHandeler
 );
 router.delete(
   "/users/:id",
   isValidMongoObjectId,
+  verifyToken,
+  checkRole(["Admin"]),
   authController.deleteUserById,
   errorHandeler
 );

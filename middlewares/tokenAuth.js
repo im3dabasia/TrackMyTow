@@ -5,6 +5,7 @@ const verifyToken = async (req, res, next) => {
 	try {
 		const token = req.cookies ? req.cookies.token : '';
 
+		console.log('logged out ')
 		if (!token) {
 			return res.status(401).json({ error: 'User not authorized' });
 		}
