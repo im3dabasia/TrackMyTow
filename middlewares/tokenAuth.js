@@ -3,9 +3,9 @@ require('dotenv').config();
 
 const verifyToken = async (req, res, next) => {
 	try {
-		const token = req.cookies ? req.cookies.token : '';
-
-		console.log('logged out ')
+		// const token = req.cookies ? req.cookies.token : '';
+		const token = req.headers['authorization'] ?  req.headers['authorization'].split(' ')[1]:'';
+		// console.log(token)
 		if (!token) {
 			return res.status(401).json({ error: 'User not authorized' });
 		}
