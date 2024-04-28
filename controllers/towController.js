@@ -60,6 +60,7 @@ const endTow = async (req, res) => {
         });
       }
 
+      currentTow.endLocation = currentTow.currentLocation;
       currentTow.sessionEnd = true;
 
       await currentTow.save();
