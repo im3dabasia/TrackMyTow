@@ -4,7 +4,7 @@ const towSessionSchema = new mongoose.Schema({
   linkId: {
     type: String,
     required: true,
-    unique: true,
+    unique: false,
   },
   policeId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -85,7 +85,6 @@ const towSessionSchema = new mongoose.Schema({
     required: true,
   },
 });
-
 
 //Older Schema
 // const towSchema = new mongoose.Schema({
