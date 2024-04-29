@@ -12,7 +12,7 @@ const sendEmailToUsers = async (emailID, templateID, data) => {
       TemplateModel: data,
     };
     console.log("Data: ", data);
-    // const response = await client.sendEmailWithTemplate(emailOptions);
+    const response = await client.sendEmailWithTemplate(emailOptions);
     console.log(`Email sent:`, response);
   } catch (error) {
     console.error("Error sending email:", error.message);
