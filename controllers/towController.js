@@ -1,13 +1,13 @@
 const { Tow, TowSession } = require("../models/tow");
 const Vehicle = require("../models/Vehicle");
 const notifyUsersForTow = require("../utils/generateEmail");
-const generateRandomLinkId = require("../utils/generateRandomLInk");
+// const generateRandomLinkId = require("../utils/generateRandomLInk");
 
 const createTow = async (req, res) => {
   console.log(req.body);
   try {
     const { policeId, startLocation, endLocation } = req.body;
-    const linkId = generateRandomLinkId();
+    const linkId = 'http://13.60.64.128/';
 
     if (!policeId || !startLocation || !endLocation) {
       return res.status(400).json({
@@ -131,7 +131,7 @@ const addVehicleToTow = async (req, res) => {
   try {
     const { towId, numberPlate, pickupLocation } = req.body;
     let userEmailId;
-    const linkId = generateRandomLinkId();
+    const linkId = 'http://13.60.64.128/';
 
     if (!towId || !numberPlate || !pickupLocation) {
       return res.status(400).json({
